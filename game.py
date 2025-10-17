@@ -24,7 +24,7 @@ def list_of_items(items):
     'money, a student handbook, laptop'
 
     """
-    pass
+    
 
     item_names = [item['name'] for item in items]  # Extract names from items
 
@@ -53,7 +53,7 @@ def print_room_items(room):
     Note: <BLANKLINE> here means that doctest should expect a blank line.
 
     """
-    pass
+    
 
     if "items" in room and room["items"]:   # Check if there are items in the room
         print("There is " + list_of_items(room["items"]) + " here.")
@@ -69,10 +69,10 @@ def print_inventory_items(items):
     <BLANKLINE>
 
     """
-    pass
+    
 
     if items:
-        print("You have " + list_of_items(items) + ".")
+        print("You have " + list_of_items(items) + ".") 
         print()
 
 
@@ -122,12 +122,10 @@ def print_room(room):
 
     Note: <BLANKLINE> here means that doctest should expect a blank line.
     """
-    # Display room name
+    print() # Print a blank line
+    print(room["name"].upper()) # Print the room name in uppercase
     print()
-    print(room["name"].upper())
-    print()
-    # Display room description
-    print(room["description"])
+    print(room["description"])  # Print the room description
     print()
 
     print_room_items(room)  # Display room items
@@ -144,7 +142,7 @@ def exit_leads_to(exits, direction):
     >>> exit_leads_to(rooms["Tutor"]["exits"], "west")
     'Reception'
     """
-    return rooms[exits[direction]]["name"]
+    return rooms[exits[direction]]["name"] # Return the name of the room the exit leads to
 
 
 def print_exit(direction, leads_to):
@@ -160,7 +158,7 @@ def print_exit(direction, leads_to):
     >>> print_exit("south", "MJ and Simon's room")
     GO SOUTH to MJ and Simon's room.
     """
-    print("GO " + direction.upper() + " to " + leads_to + ".")
+    print("GO " + direction.upper() + " to " + leads_to + ".") # Print the exit in the specified format
 
 
 def print_menu(exits, room_items, inv_items):
@@ -223,16 +221,16 @@ def is_valid_exit(exits, chosen_exit):
     >>> is_valid_exit(rooms["Parking"]["exits"], "east")
     True
     """
-    return chosen_exit in exits
+    return chosen_exit in exits # Check if the chosen exit is in the exits dictionary
 
 
-def execute_go(direction):
+def execute_go(direction): 
     """This function, given the direction (e.g. "south") updates the current room
     to reflect the movement of the player if the direction is a valid exit
     (and prints the name of the room into which the player is
     moving). Otherwise, it prints "You cannot go there."
     """
-    pass
+    
 
     global current_room # Access the global current_room variable
     if is_valid_exit(current_room["exits"], direction): # Check if the direction is valid
@@ -250,7 +248,7 @@ def execute_take(item_id):
     there is no such item in the room, this function prints
     "You cannot take that."
     """
-    pass
+    
 
     global inventory # Access the global inventory variable
     item_to_take = None
@@ -272,7 +270,7 @@ def execute_drop(item_id):
     player's inventory to list of items in the current room. However, if there is
     no such item in the inventory, this function prints "You cannot drop that."
     """
-    pass
+    
 
     global inventory # Access the global inventory variable
     item_to_drop = None
@@ -299,52 +297,54 @@ def execute_command(command):
 
     """
 
-    if 0 == len(command):
+    if 0 == len(command): # Check for empty command
         return
 
-    if command[0] == "go":
-        if len(command) > 1:
-            execute_go(command[1])
-        else:
-            print("Go where?")
+    if command[0] == "go": # If the command is "go"
+        if len(command) > 1: # Check if there is a direction
+            execute_go(command[1]) # Execute the go command
+        else:   
+            print("Go where?") # Ask for a direction
 
-    elif command[0] == "take":
-        if len(command) > 1:
-            execute_take(command[1])
+    elif command[0] == "take":  # If the command is "take"
+        if len(command) > 1: # Check if there is an item id
+            execute_take(command[1]) # Execute the take command
         else:
-            print("Take what?")
+            print("Take what?") # Ask for an item id
 
-    elif command[0] == "drop":
-        if len(command) > 1:
-            execute_drop(command[1])
+    elif command[0] == "drop":  # If the command is "drop"
+        if len(command) > 1:  # Check if there is an item id
+            execute_drop(command[1]) # Execute the drop command
         else:
-            print("Drop what?")
+            print("Drop what?") # Ask for an item id
 
     else:
-        print("This makes no sense.")
+        print("This makes no sense.") # Let the player know the command is invalid
 
 
 def menu(exits, room_items, inv_items):
-    """This function, given a dictionary of possible exits from a room, and a list
+    """
+    This function, given a dictionary of possible exits from a room, and a list
     of items found in the room and carried by the player, prints the menu of
     actions using print_menu() function. It then prompts the player to type an
-    action. The players's input is normalised using the normalise_input()
+    action. The player's input is normalised using the normalise_input()
     function before being returned.
-
     """
 
-    while True: # Loop until a valid exit is chosen
-        print_menu(exits, room_items, inv_items) # Display the menu
+    while True:  # Loop until a valid exit is chosen
+        print_menu(exits, room_items, inv_items)  # Display the menu
 
-        user_input = input() # Get the player's input
+        user_input = input()  # Get the player's input
+        normalised_input = normalise_input(user_input)  # Normalise the input
 
-        normalised_input = normalise_input(user_input) # Normalise the input
-
-        if is_valid_exit(exits, normalised_input): # Check if the input is valid    
-            return normalised_input # If it is, return the input
-        
+        if len(normalised_input) > 1 and normalised_input[0] == "go": # If the command is "go"
+            direction = normalised_input[1]
+            if is_valid_exit(exits, direction):  # Check if the direction is valid
+                return normalised_input  # Return the normalised input
+            else:
+                print("You cannot go there.")  # Let the player know the choice is invalid
         else:
-            print("You cannot go there.") # Let the player know the choice is invalid
+            return normalised_input  # Return the normalised input for non-'go' commands
 
 
 def move(exits, direction):
